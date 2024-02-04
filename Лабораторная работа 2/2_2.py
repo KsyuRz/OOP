@@ -1,3 +1,5 @@
+import typing
+
 BOOKS_DATABASE = [
     {
         "id": 1,
@@ -10,51 +12,56 @@ BOOKS_DATABASE = [
         "pages": 400,
     }
 ]
-# Создаем класс Книга
+
+
 class Book:
-    # ССоздаем конструктор для класса Книга
-    def __init__(self, id_: int, name: str, pages: int):
-        self.id_ = id_
+    def __init__(self, id: int, name: str, pages: int):
+        if not isinstance(id, int):
+            raise TypeError('id_ должно быть типа int')
+        if id < 0:
+            raise ValueError('id_ должно быть больше 0')
+        self.id = id
+        if not isinstance(name, str):
+            raise TypeError('Название книги должно быть типа str')
         self.name = name
+        if not isinstance(pages, int):
+            raise TypeError('Количество страниц должно быть типа int')
+        if pages < 0:
+            raise ValueError('Количество страниц не должно быть отрицательным')
         self.pages = pages
 
-    # Методы
     def __str__(self):
         return f"Книга \"{self.name}\""
 
     def __repr__(self):
-        return f"Book(id_={self.id_}, name=\'{self.name}\', pages={self.pages})"
+        return f"Book(id_={self.id}, name=\'{self.name}\', pages={self.pages})"
 
-# Создаем класс Библиотека
+
 class Library:
-    # Создаем конструктор для класса Библиотека
     def __init__(self, books: list[Book] = None):
         self.books: list[Book] = books if books else []
 
-    # Метод для создания id для добавления новой книги в список
     def get_next_book_id(self):
         if len(self.books) == 0:
             return 1
-        return self.books[-1].id_ + 1
+        return self.books[-1].id + 1
 
-    # Метод для поиска книги
     def get_index_by_book_id(self, book_id: int):
         for i, book in enumerate(self.books):
-            if book.id_ == book_id:
+            if book.id == book_id:
                 return i
         else:
             raise ValueError("Книги с запрашиваемым id не существует")
-            # Выводим сообщение об ошибке, если книга с заданным id не существует в списке
 
 
 if __name__ == '__main__':
-    empty_library = Library()  # инициализируем пустую библиотеку
-    print(empty_library.get_next_book_id())  # проверяем следующий id для пустой библиотеки
+    empty_library = Library()  # Инициализация пустой библиотеки
+    print(empty_library.get_next_book_id())  # Проверка следующего id для пустой библиотеки
 
     list_books = [
-        Book(id_=book_dict["id"], name=book_dict["name"], pages=book_dict["pages"]) for book_dict in BOOKS_DATABASE
+        Book(id=book_dict["id"], name=book_dict["name"], pages=book_dict["pages"]) for book_dict in BOOKS_DATABASE
     ]
-    library_with_books = Library(books=list_books)  # инициализируем библиотеку с книгами
-    print(library_with_books.get_next_book_id())  # проверяем следующий id для непустой библиотеки
+    library_with_books = Library(books=list_books)  # Инициализация библиотеки с книгами
+    print(library_with_books.get_next_book_id())  # Проверка следующего id для библиотеки с книгами
 
-    print(library_with_books.get_index_by_book_id(1))  # проверяем индекс книги с id = 1
+    print(library_with_books.get_index_by_book_id(1))  # Проверка индекса книги с id = 1
